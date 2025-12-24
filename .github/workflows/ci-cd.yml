@@ -41,7 +41,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_NAME }}
+        username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_KEY }}
         port: ${{ secrets.VPS_PORT }}
         script: |

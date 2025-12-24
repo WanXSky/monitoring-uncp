@@ -60,5 +60,12 @@ jobs:
           
           echo "Delete Junk Image.."
           docker image prune -f
+
+          echo "Migrations Database..."
+          docker exec laravel-app php artisan migrate --force
+
+          echo "Optimizing.."
+          docker exec laravel-app php artisan config:clear 
+          docker exec laravel-app php artisan cache:clear
           
           echo "Deployed"

@@ -20,6 +20,5 @@ COPY --from=vendor-builder /app/vendor /var/www/vendor
 COPY --from=frontend-builder /app/public/build /var/www/public/build
 COPY . .
 RUN chmod -R 755 /var/www/storage && chown -R www-data:www-data /var/www
-RUN ./vendor/bin/pint
 
 USER www-data

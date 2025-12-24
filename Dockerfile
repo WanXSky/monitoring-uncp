@@ -19,6 +19,6 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring pcntl
 COPY --from=VendorBuilder /app/vendor /var/www/vendor
 COPY --from=FrontendBuilder /app/public/build /var/www/public/build
 COPY . .
-RUN chmod -R 755 /var/www/storage && chown -R www-data:www-data /var/www && chmod 600 traefik/acme.json
+RUN chmod -R 755 /var/www/storage && chown -R www-data:www-data /var/www
 
 USER www-data

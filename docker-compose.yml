@@ -1,0 +1,80 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile2
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel
+
+  db:
+    image: mysql:8.0
+    container_name: laravel-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Palopo@1909
+      MYSQL_USER: laravel
+      MYSQL_DATABASE: laravel
+      MYSQL_PASSWORD: laravel
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www
+    depends_on:
+      - db
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.laravel.rule=Host(`monitoring-uncp.my.id`)"
+      - "traefik.http.routers.laravel.entrypoints=web,websecure"
+      - "traefik.http.routers.laravel.tls.certresolver=myresolver"
+    networks:
+      - laravel
+
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"                       # Dashboard di localhost:8080
+      - "--providers.docker=true"                  # Enable Docker provider
+      - "--entrypoints.web.address=:80"           # HTTP
+      - "--entrypoints.websecure.address=:443"    # HTTPS
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=onokosy@gmail.com" # Ganti email
+      - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "127.0.0.1:8080:8080"  # dashboard hanya localhost
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock       # Docker socket
+      - ./traefik/acme.json:/acme.json                 # ACME storage
+    depends_on:
+      - nginx
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
+
+volumes:
+  dbdata:

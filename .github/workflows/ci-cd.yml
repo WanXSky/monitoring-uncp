@@ -67,5 +67,8 @@ jobs:
           echo "Optimizing.."
           docker exec laravel-app php artisan config:clear 
           docker exec laravel-app php artisan cache:clear
+
+          echo "Run Schedule.."
+          docker exec laravel-app php artisan schedule:run
           
           echo "Deployed"

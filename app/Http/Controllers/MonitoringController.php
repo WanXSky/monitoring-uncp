@@ -15,7 +15,7 @@ class MonitoringController extends Controller
             $start = microtime(true);
 
             try {
-                $response = Http::timeout(10)->get($site->url);
+                $response = Http::withHeaders(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',])->timeout(10)->get($site->url);
                 $status = $response->successful();
                 $time = (microtime(true) - $start) * 1000;
             } catch (\Exception $e) {

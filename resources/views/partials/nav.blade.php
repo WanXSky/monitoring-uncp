@@ -50,7 +50,8 @@
           </li>
 
           <li class="nav-item">
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}"
+                  onsubmit="return confirm('Apakah anda yakin ingin keluar?')">
               @csrf
               <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
             </form>

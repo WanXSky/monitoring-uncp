@@ -23,7 +23,7 @@
               <img
                 src="{{ asset('img/icon.jpg') }}"
                 alt="Logo UNCP"
-                style="height:80px; width:auto;"
+                style="height:50px; width:auto;"
               >
             </div>
 

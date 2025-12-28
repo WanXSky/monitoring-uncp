@@ -26,7 +26,7 @@
           <input
             type="url"
             name="url"
-            value="{{ old('url', $website->url) }}"
+            value="{{ old('url') }}"
             class="form-control @error('url') is-invalid @enderror"
             placeholder="https://contoh.com"
             required

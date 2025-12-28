@@ -17,8 +17,18 @@
       <div class="col-md-5">
         <div class="card">
           <div class="card-body p-4">
-            <h4 class="fw-bold mb-1">Login Admin</h4>
-            <div class="text-muted mb-3">Sistem Monitoring Status Website UNCP</div>
+
+            {{-- LOGO DI PALING ATAS --}}
+            <div class="text-center mb-3">
+              <img
+                src="{{ asset('img/icon.jpg') }}"
+                alt="Logo UNCP"
+                style="height:80px; width:auto;"
+              >
+            </div>
+
+            <h4 class="fw-bold mb-1 text-center">Login Admin</h4>
+            <div class="text-muted mb-3 text-center">Sistem Monitoring Status Website UNCP</div>
 
             @if ($errors->any())
               <div class="alert alert-danger">

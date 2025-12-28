@@ -56,12 +56,13 @@
                 </label>
               </div>
 
-              <div class="mb-3">
+              <div class="mb-3 d-flex justify-content-center">
                 <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-                @error('g-recaptcha-response')
-                  <div class="text-danger small mt-1">{{ $message }}</div>
-                @enderror
               </div>
+
+              @error('g-recaptcha-response')
+                <div class="text-danger small mt-1 text-center">{{ $message }}</div>
+              @enderror
 
               <button class="btn btn-primary w-100" type="submit">Masuk</button>
             </form>

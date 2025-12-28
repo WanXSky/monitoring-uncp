@@ -50,7 +50,7 @@ class WebsiteController extends Controller
 
     public function store(Request $request)
     {
-        // Normalisasi dulu supaya validasi url laravel tidak gagal karena tidak ada scheme
+        // Normalisasi dulu
         $request->merge([
             'url' => $this->normalizeUrl((string) $request->input('url')),
         ]);
@@ -62,11 +62,15 @@ class WebsiteController extends Controller
                 'string',
                 'max:255',
                 'url',
-                // opsional: biar url tidak dobel
+
+                // ✅ WAJIB ada TLD (contoh .com / .id / .ac.id dll)
+                'regex:/^https?:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:\/[^\s]*)?$/i',
+
                 Rule::unique('websites', 'url'),
             ],
         ], [
-            'url.url' => 'Url tidak valid.',
+            'url.url'    => 'URL tidak valid.',
+            'url.regex'  => 'URL tidak valid. Wajib pakai domain lengkap (contoh: https://contoh.com).',
             'url.unique' => 'URL sudah terdaftar.',
         ]);
 
@@ -125,6 +129,7 @@ class WebsiteController extends Controller
 
     public function update(Request $request, Website $website)
     {
+        // Normalisasi dulu
         $request->merge([
             'url' => $this->normalizeUrl((string) $request->input('url')),
         ]);
@@ -136,11 +141,15 @@ class WebsiteController extends Controller
                 'string',
                 'max:255',
                 'url',
-                // opsional: unik tapi ignore id website ini
+
+                // ✅ WAJIB ada TLD
+                'regex:/^https?:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?::\d{1,5})?(?:\/[^\s]*)?$/i',
+
                 Rule::unique('websites', 'url')->ignore($website->id),
             ],
         ], [
-            'url.url' => 'Url tidak valid.',
+            'url.url'    => 'URL tidak valid.',
+            'url.regex'  => 'URL tidak valid. Wajib pakai domain lengkap (contoh: https://contoh.com).',
             'url.unique' => 'URL sudah terdaftar.',
         ]);
 

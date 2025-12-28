@@ -9,6 +9,22 @@
   <style>
     body { background:#f6f7fb; }
     .card { border:0; box-shadow: 0 8px 22px rgba(0,0,0,0.08); }
+    .card-body { overflow: hidden; } /* jaga-jaga biar tidak tembus */
+
+      /* Logo responsif */
+    .login-logo{
+      max-width: 100%;
+      height: auto;
+      max-height: 90px; /* atur tinggi maksimum di desktop */
+      object-fit: contain;
+    }
+
+    /* Kalau mobile, biasanya perlu lebih kecil */
+    @media (max-width: 576px){
+      .login-logo{
+        max-height: 60px;
+      }
+    }
   </style>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
@@ -20,11 +36,11 @@
           <div class="card-body p-4">
 
             {{-- LOGO DI PALING ATAS --}}
-            <div class="text-center mb-3">
+            <div class="text-center mb-3 px-2">
               <img
                 src="{{ asset('img/icon.jpg') }}"
                 alt="Logo UNCP"
-                style="height:50px; width:auto;"
+                class="img-fluid login-logo"
               >
             </div>
 

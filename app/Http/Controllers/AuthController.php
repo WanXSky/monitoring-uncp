@@ -45,7 +45,12 @@ class AuthController extends Controller
 
         if (Auth::attempt($cred, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+
+            return redirect()
+                ->route('dashboard')
+                ->with('welcome_popup', [
+                    'name' => Auth::user()->name,
+                ]);
         }
 
         return back()->withErrors([

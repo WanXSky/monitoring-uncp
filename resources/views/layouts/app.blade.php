@@ -31,5 +31,29 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   @stack('scripts')
+
+  {{-- SweetAlert2 --}}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  @if (session()->has('welcome_popup'))
+    <script>
+      const welcome = @json(session('welcome_popup'));
+
+      Swal.fire({
+        title: `Selamat datang, ${welcome.name} 👋`,
+        html: `
+          <div style="line-height:1.6">
+            Di <b>Sistem Monitoring Website UNCP</b>.<br>
+            Semoga monitoring hari ini lancar ✅
+          </div>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Masuk Dashboard',
+        confirmButtonColor: '#0d6efd',
+        timer: 4500,
+        timerProgressBar: true,
+      });
+    </script>
+  @endif
 </body>
 </html>

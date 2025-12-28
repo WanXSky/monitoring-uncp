@@ -23,7 +23,17 @@
 
         <div class="mb-3">
           <label class="form-label">URL</label>
-          <input class="form-control" name="url" value="{{ old('url') }}" required maxlength="255" placeholder="https://example.com">
+          <input
+            type="url"
+            name="url"
+            value="{{ old('url', $website->url) }}"
+            class="form-control @error('url') is-invalid @enderror"
+            placeholder="https://contoh.com"
+            required
+          >
+          @error('url')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
           <div class="small-muted mt-1">Gunakan format URL lengkap (http/https).</div>
         </div>
 

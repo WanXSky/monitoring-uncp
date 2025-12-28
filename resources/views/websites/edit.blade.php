@@ -24,7 +24,17 @@
 
         <div class="mb-3">
           <label class="form-label">URL</label>
-          <input class="form-control" name="url" value="{{ old('url', $website->url) }}" required maxlength="255">
+          <input
+            type="url"
+            name="url"
+            value="{{ old('url', $website->url) }}"
+            class="form-control @error('url') is-invalid @enderror"
+            placeholder="https://contoh.com"
+            required
+          >
+          @error('url')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
         </div>
 
         <button class="btn btn-primary" type="submit">Update</button>

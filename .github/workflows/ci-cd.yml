@@ -49,14 +49,14 @@ jobs:
           cd /var/www/proyek-1
           
           echo "Login To Docker"
-          echo "${{ secrets.GHCR_PAT }}" | docker ghcr.io login -u wanxsky --password-stdin
+          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u wanxsky --password-stdin
           
           echo "Pulling Image Docker"
           docker compose pull
           
           echo "Restaring.."
           docker compose down
-          docker compose up -d
+          docker compose up -d --force-recreate --build
           
           echo "Delete Junk Image.."
           docker image prune -f

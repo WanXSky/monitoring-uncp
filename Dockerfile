@@ -17,9 +17,9 @@ FROM php:8.4-fpm-alpine
 WORKDIR /var/www
 RUN apk add --no-cache linux-headers oniguruma-dev
 RUN docker-php-ext-install pdo pdo_mysql mbstring pcntl
+COPY . .
 COPY --from=vendor-builder /app/vendor /var/www/vendor
 COPY --from=frontend-builder /app/public/build /var/www/public/build
-COPY . .
 RUN chmod -R 755 /var/www/storage && chown -R www-data:www-data /var/www
 
 USER www-data

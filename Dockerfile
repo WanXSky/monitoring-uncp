@@ -23,3 +23,4 @@ COPY --from=frontend-builder /app/public/build /var/www/public/build
 RUN chmod -R 755 /var/www/storage && chown -R www-data:www-data /var/www
 
 USER www-data
+CMD ["php-fpm", "-F"]

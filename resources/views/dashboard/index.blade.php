@@ -137,7 +137,7 @@
 <style>
   /* tinggi kira-kira 5 notifikasi */
   .dash-notif-scroll{
-    max-height: 640px;
+    max-height: 840px;
     overflow-y: auto;
     padding-right: 6px;
     overscroll-behavior: contain;

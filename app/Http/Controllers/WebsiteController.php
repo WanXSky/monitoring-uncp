@@ -53,6 +53,71 @@ class WebsiteController extends Controller
         ]);
     }
 
+    public function live(Website $website)
+    {
+        // ambil website terbaru dari DB
+        $website->refresh();
+
+        // notif terbaru (maks 50)
+        $notifications = Notification::query()
+            ->where('website_id', $website->id)
+            ->orderByDesc('sent_at')
+            ->limit(50)
+            ->get()
+            ->map(fn ($n) => [
+                'sent_at' => $n->sent_at ? $n->sent_at->format('Y-m-d H:i:s') : null,
+                'type'    => strtoupper((string) $n->type),
+                'message' => (string) $n->message,
+            ]);
+
+        // log terbaru (maks 200)
+        $logs = MonitoringLog::query()
+            ->where('website_id', $website->id)
+            ->orderByDesc('checked_at')
+            ->limit(200)
+            ->get()
+            ->map(fn ($l) => [
+                'checked_at'    => $l->checked_at ? $l->checked_at->format('Y-m-d H:i:s') : null,
+                'status'        => (int) $l->status,
+                'response_time' => $l->response_time,
+            ]);
+
+        // chart 24 jam terakhir (avg per jam)
+        $chartRows = MonitoringLog::query()
+            ->selectRaw("DATE_FORMAT(checked_at, '%Y-%m-%d %H:00:00') as t, AVG(response_time) as avg_rt")
+            ->where('website_id', $website->id)
+            ->where('checked_at', '>=', now()->subHours(24))
+            ->whereNotNull('response_time')
+            ->groupBy('t')
+            ->orderBy('t')
+            ->get();
+
+        $chartLabels = $chartRows->pluck('t')->toArray();
+        $chartValues = $chartRows->pluck('avg_rt')->map(fn ($v) => (int) round($v))->toArray();
+
+        // format ssl (tetap)
+        $sslText = $website->ssl_expired_at
+            ? \Carbon\Carbon::parse($website->ssl_expired_at)->format('d/m/Y H:i:s')
+            : null;
+
+        return response()->json([
+            'server_time' => now()->format('Y-m-d H:i:s'),
+            'website' => [
+                'id'           => $website->id,
+                'status'       => (int) $website->status,
+                'response_time'=> $website->response_time,
+                'ssl_text'     => $sslText,
+                'last_checked' => $website->last_checked ? $website->last_checked->format('Y-m-d H:i:s') : null,
+            ],
+            'notifications' => $notifications,
+            'logs'          => $logs,
+            'chart' => [
+                'labels' => $chartLabels,
+                'values' => $chartValues,
+            ],
+        ]);
+    }
+
     public function create()
     {
         return view('websites.create');

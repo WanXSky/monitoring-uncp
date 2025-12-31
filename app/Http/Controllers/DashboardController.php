@@ -51,4 +51,65 @@ class DashboardController extends Controller
             'chartValues'
         ));
     }
+
+    public function live()
+    {
+        $total = Website::count();
+        $online = Website::where('status', 1)->count();
+        $down   = Website::where('status', 0)->count();
+
+        // daftar website untuk dashboard (maks 6)
+        $websites = Website::query()
+            ->orderBy('name')
+            ->limit(6)
+            ->get()
+            ->map(fn ($w) => [
+                'id'           => $w->id,
+                'name'         => $w->name,
+                'url'          => $w->url,
+                'status'       => (int) $w->status,
+                'response_time'=> $w->response_time,
+                'last_checked' => $w->last_checked ? $w->last_checked->format('Y-m-d H:i:s') : null,
+            ]);
+
+        // notifikasi terbaru (maks 5)
+        $latestNotifications = Notification::query()
+            ->with('website:id,name')
+            ->orderByDesc('sent_at')
+            ->limit(5)
+            ->get()
+            ->map(fn ($n) => [
+                'sent_at' => $n->sent_at ? $n->sent_at->format('Y-m-d H:i:s') : null,
+                'type'    => strtoupper((string) $n->type),
+                'website' => $n->website?->name ?? ('Website #'.$n->website_id),
+                'message' => (string) $n->message,
+            ]);
+
+        // chart 5 hari (avg per hari) - sesuaikan dengan logic dashboard kamu
+        $chartRows = MonitoringLog::query()
+            ->selectRaw("DATE(checked_at) as d, AVG(response_time) as avg_rt")
+            ->where('checked_at', '>=', now()->subDays(5))
+            ->whereNotNull('response_time')
+            ->groupBy('d')
+            ->orderBy('d')
+            ->get();
+
+        $chartLabels = $chartRows->pluck('d')->toArray();
+        $chartValues = $chartRows->pluck('avg_rt')->map(fn ($v) => (int) round($v))->toArray();
+
+        return response()->json([
+            'server_time' => now()->format('Y-m-d H:i:s'),
+            'stats' => [
+                'total'  => $total,
+                'online' => $online,
+                'down'   => $down,
+            ],
+            'websites' => $websites,
+            'notifications' => $latestNotifications,
+            'chart' => [
+                'labels' => $chartLabels,
+                'values' => $chartValues,
+            ],
+        ]);
+    }
 }

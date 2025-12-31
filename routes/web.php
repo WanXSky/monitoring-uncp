@@ -18,6 +18,14 @@ Route::get('/websites/status', [WebsiteController::class, 'status'])
     ->name('websites.status')
     ->middleware('auth');
 
+Route::get('/websites/{website}/live', [WebsiteController::class, 'live'])
+    ->name('websites.live')
+    ->middleware('auth');
+
+Route::get('/dashboard/live', [DashboardController::class, 'live'])
+    ->name('dashboard.live')
+    ->middleware('auth');
+
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

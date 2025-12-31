@@ -28,31 +28,6 @@ class WebsiteController extends Controller
         return view('websites.index', compact('websites', 'q'));
     }
 
-    public function status(Request $request)
-    {
-        $ids = $request->query('ids', []);
-        if (!is_array($ids)) $ids = [];
-
-        $rows = Website::query()
-            ->select('id', 'status', 'response_time', 'ssl_expired_at', 'last_checked')
-            ->when(count($ids) > 0, fn ($q) => $q->whereIn('id', $ids))
-            ->get()
-            ->map(function ($w) {
-                return [
-                    'id'            => $w->id,
-                    'status'        => (int) $w->status,
-                    'response_time' => $w->response_time,
-                    'ssl_expired_at'=> $w->ssl_expired_at ? $w->ssl_expired_at->toDateString() : null,
-                    'last_checked'  => $w->last_checked ? $w->last_checked->format('Y-m-d H:i:s') : null,
-                ];
-            });
-
-        return response()->json([
-            'data' => $rows,
-            'server_time' => now()->format('Y-m-d H:i:s'),
-        ]);
-    }
-
     public function create()
     {
         return view('websites.create');
